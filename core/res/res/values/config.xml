@@ -3565,4 +3565,6 @@
     <!-- Component name for default assistant on this device -->
     <string name="config_defaultAssistantComponentName"></string>
 
+    <!-- Whether light blink should be started on low battery -->
+    <bool name="config_lowBatteryLed">true</bool>
 </resources>

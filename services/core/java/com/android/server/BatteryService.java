@@ -180,6 +180,8 @@ public final class BatteryService extends SystemService {
 
     private Led mLed;
 
+    private boolean mLowBatteryLed;
+
     private boolean mSentLowBatteryBroadcast = false;
 
     private ActivityManagerInternal mActivityManagerInternal;
@@ -1060,6 +1062,8 @@ public final class BatteryService extends SystemService {
                     com.android.internal.R.integer.config_notificationsBatteryLedOn);
             mBatteryLedOff = context.getResources().getInteger(
                     com.android.internal.R.integer.config_notificationsBatteryLedOff);
+            mLowBatteryLed = context.getResources().getBoolean(
+                    com.android.internal.R.bool.config_lowBatteryLed);
         }
 
         /**
@@ -1072,10 +1076,13 @@ public final class BatteryService extends SystemService {
                 if (status == BatteryManager.BATTERY_STATUS_CHARGING) {
                     // Solid red when battery is charging
                     mBatteryLight.setColor(mBatteryLowARGB);
-                } else {
+                } else if (mLowBatteryLed) {
                     // Flash red when battery is low and not charging
                     mBatteryLight.setFlashing(mBatteryLowARGB, Light.LIGHT_FLASH_TIMED,
                             mBatteryLedOn, mBatteryLedOff);
+                } else {
+                    // Low Battery LED is disabled, kill lights
+                    mBatteryLight.turnOff();
                 }
             } else if (status == BatteryManager.BATTERY_STATUS_CHARGING
                     || status == BatteryManager.BATTERY_STATUS_FULL) {
